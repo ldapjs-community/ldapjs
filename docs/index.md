@@ -79,7 +79,7 @@ API documentation is:
 # More information
 
 - License:[MIT](http://opensource.org/licenses/mit-license.php)
-- Code: [ldapjs/node-ldapjs](https://github.com/ldapjs/node-ldapjs)
+- Code: [ldapjs-community/ldapjs](https://github.com/ldapjs-community/ldapjs)
 
 # What's not in the box?
 
