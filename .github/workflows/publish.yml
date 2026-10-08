@@ -48,7 +48,7 @@ jobs:
           npm init --yes
           npm pkg set dependencies.ldapjs-smoke-consumer='file:../consumer'
           npm pkg set overrides.ldapjs="npm:ldapjs-community@^$version"
-          npm install 2>&1 | tee install.log
+          npm install --install-links 2>&1 | tee install.log
           npm ls ldapjs
           npm audit
           ! grep -i 'deprecated' install.log
