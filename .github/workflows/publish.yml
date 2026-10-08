@@ -1,0 +1,54 @@
+name: 'Publish Package'
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    if: startsWith(github.event.release.tag_name, 'v2.')
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+          registry-url: 'https://registry.npmjs.org'
+          package-manager-cache: false
+
+      - name: Install npm with trusted publishing support
+        run: npm install --global npm@11.6.2
+      - name: Verify Release Version
+        run: |
+          expected="v$(node -p "require('./package.json').version")"
+          test "$GITHUB_REF_NAME" = "$expected"
+      - name: Install Packages
+        run: npm ci
+      - name: Run Tests
+        run: npm test
+      - name: Publish Package
+        run: npm publish --access public --provenance
+
+      - name: Smoke Test Override
+        run: |
+          version=$(node -p "require('./package.json').version")
+          root="$RUNNER_TEMP/ldapjs-smoke"
+          mkdir -p "$root/consumer" "$root/app"
+
+          cd "$root/consumer"
+          npm init --yes
+          npm pkg set name=ldapjs-smoke-consumer dependencies.ldapjs='^2.3.3'
+
+          cd "$root/app"
+          npm init --yes
+          npm pkg set dependencies.ldapjs-smoke-consumer='file:../consumer'
+          npm pkg set overrides.ldapjs="npm:ldapjs-community@^$version"
+          npm install 2>&1 | tee install.log
+          npm ls ldapjs
+          npm audit
+          ! grep -i 'deprecated' install.log

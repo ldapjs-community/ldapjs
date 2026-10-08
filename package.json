@@ -3,11 +3,11 @@
   "name": "ldapjs-community",
   "homepage": "",
   "description": "LDAP client and server APIs",
-  "version": "2.3.3",
+  "version": "2.3.4",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/ldapjs-community/ldapjs"
+    "url": "git+https://github.com/ldapjs-community/ldapjs.git"
   },
   "main": "lib/index.js",
   "directories": {
