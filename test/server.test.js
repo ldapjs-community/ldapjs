@@ -31,15 +31,30 @@ tap.test('connection count', function (t) {
       t.error(err)
       t.equal(count, 0)
 
-      const client = ldap.createClient({ url: server.url })
-      client.on('connect', function () {
-        t.ok(true, 'client connected')
+      let clientConnected = false
+      let serverConnected = false
+
+      function checkConnections () {
+        if (!clientConnected || !serverConnected) return
+
         server.getConnections(function (err, count) {
           t.error(err)
           t.equal(count, 1)
           client.unbind()
           server.close(() => t.end())
         })
+      }
+
+      server.server.once('connection', function () {
+        serverConnected = true
+        checkConnections()
+      })
+
+      const client = ldap.createClient({ url: server.url })
+      client.on('connect', function () {
+        t.ok(true, 'client connected')
+        clientConnected = true
+        checkConnections()
       })
     })
   })

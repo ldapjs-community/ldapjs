@@ -10,7 +10,9 @@ const PORT = process.env.PORT || 389
 const baseURL = `${SCHEME}://${HOST}:${PORT}`
 
 tap.test('modifyDN with long name (issue #480)', t => {
-  const longStr = 'a292979f2c86d513d48bbb9786b564b3c5228146e5ba46f404724e322544a7304a2b1049168803a5485e2d57a544c6a0d860af91330acb77e5907a9e601ad1227e80e0dc50abe963b47a004f2c90f570450d0e920d15436fdc771e3bdac0487a9735473ed3a79361d1778d7e53a7fb0e5f01f97a75ef05837d1d5496fc86968ff47fcb64'
+  // OpenLDAP 2.5 cannot index the original 265-character value. This remains
+  // long enough to cover the regression from issue #480.
+  const longStr = '292979f2c86d513d48bbb9786b564b3c5228146e5ba46f404724e322544a7304a2b1049168803a5485e2d57a544c6a0d860af91330acb77e5907a9e601ad1227e80e0dc50ab'
   const targetDN = 'cn=Turanga Leela,ou=people,dc=planetexpress,dc=com'
   const client = ldapjs.createClient({ url: baseURL })
   client.bind('cn=admin,dc=planetexpress,dc=com', 'GoodNewsEveryone', bindHandler)

@@ -1,7 +1,6 @@
 # LDAPjs
 
-[![Build Status](https://github.com/ldapjs-community/ldapjs/workflows/Lint%20And%20Test/badge.svg)](https://github.com/ldapjs-community/ldapjs/actions)
-[![Coverage Status](https://coveralls.io/repos/github/ldapjs-community/ldapjs/badge.svg)](https://coveralls.io/github/ldapjs-community/ldapjs/)
+[![CI](https://github.com/ldapjs-community/ldapjs/actions/workflows/main.yml/badge.svg?branch=v2)](https://github.com/ldapjs-community/ldapjs/actions/workflows/main.yml)
 
 LDAPjs makes the LDAP protocol a first class citizen in Node.js.
 
