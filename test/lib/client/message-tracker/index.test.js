@@ -199,3 +199,23 @@ tap.test('#track', t => {
 
   t.end()
 })
+
+tap.test('clears timers when messages stop being tracked', async t => {
+  let fired = 0
+  const tracker = messageTrackerFactory({ id: 'foo', parser: {} })
+
+  tracker.track({}, () => {})
+  tracker.setTimer(1, setTimeout(() => { fired++ }, 20))
+  tracker.abandon(1)
+
+  tracker.track({}, () => {})
+  tracker.setTimer(2, setTimeout(() => { fired++ }, 20))
+  tracker.remove(2)
+
+  tracker.track({}, () => {})
+  tracker.setTimer(3, setTimeout(() => { fired++ }, 20))
+  tracker.purge(() => {})
+
+  await new Promise(resolve => setTimeout(resolve, 50))
+  t.equal(fired, 0)
+})
