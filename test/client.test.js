@@ -1557,6 +1557,36 @@ tap.test('abandon (GH-27)', function (t) {
   })
 })
 
+tap.test('abandon clears the request timeout', function (t) {
+  const client = t.context.client
+  client.timeout = 100
+  let callbacks = 0
+  let errors = 0
+  let timeouts = 0
+
+  client.on('timeout', function () {
+    timeouts++
+  })
+  client.search('dc=timeout', 'objectclass=*', function (err, res) {
+    callbacks++
+    t.error(err)
+    res.on('error', function () {
+      errors++
+    })
+    res.on('searchRequest', function (request) {
+      client.abandon(request.messageID, function (err) {
+        t.error(err)
+        setTimeout(function () {
+          t.equal(timeouts, 0)
+          t.equal(errors, 0)
+          t.equal(callbacks, 1)
+          t.end()
+        }, 250)
+      })
+    })
+  })
+})
+
 tap.test('search timeout (GH-51)', function (t) {
   t.context.client.timeout = 250
   t.context.client.search('dc=timeout', 'objectclass=*', function (err, res) {
