@@ -9,6 +9,56 @@ const ldap = require('../lib')
 const SERVER_PORT = process.env.SERVER_PORT || 1389
 const SUFFIX = 'dc=test'
 
+function malformedPacketTest (name, packet) {
+  tap.test(name, function (t) {
+    const server = ldap.createServer()
+    let gotClientError = false
+    let connectionClosed = false
+
+    server.search(SUFFIX, function (req, res, next) {
+      res.end()
+      return next()
+    })
+    server.once('clientError', function (err) {
+      t.type(err, Error)
+      gotClientError = true
+      verifyServerStillAcceptsClients()
+    })
+    server.listen(t.context.sock, function () {
+      const socket = net.connect(t.context.sock, function () {
+        socket.write(packet)
+      })
+      socket.resume()
+      socket.on('error', function () {})
+      socket.once('close', function () {
+        connectionClosed = true
+        verifyServerStillAcceptsClients()
+      })
+    })
+
+    function verifyServerStillAcceptsClients () {
+      if (!gotClientError || !connectionClosed) return
+      t.ok(connectionClosed, 'closed the malformed client connection')
+
+      const client = ldap.createClient({ socketPath: t.context.sock })
+      client.on('error', t.error)
+      client.search(SUFFIX, '(objectclass=*)', function (err, res) {
+        t.error(err)
+        res.on('error', t.error)
+        res.on('end', function () {
+          client.unbind(function (err) {
+            t.error(err)
+            server.close(function () {
+              t.pass('accepted a valid client after the malformed packet')
+              t.end()
+            })
+          })
+        })
+      })
+    }
+  })
+}
+
 tap.beforeEach(function (t) {
   // We do not need a `.afterEach` to clean up the sock files because that
   // is done when the server is destroyed.
@@ -20,6 +70,17 @@ tap.test('basic create', function (t) {
   t.ok(server)
   t.end()
 })
+
+malformedPacketTest(
+  'malformed BER emits clientError and closes only its connection',
+  Buffer.from([16, 1, 4]))
+
+malformedPacketTest(
+  'invalid search filter emits clientError and closes only its connection',
+  Buffer.from(
+    '302e0201086329041164633d747473616e616c73616e7472616c' +
+    '0a01020a01000201000201000101ff30050403312e31',
+    'hex'))
 
 tap.test('connection count', function (t) {
   const server = ldap.createServer()
