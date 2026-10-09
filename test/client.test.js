@@ -1172,6 +1172,52 @@ tap.test('search referral', function (t) {
   })
 })
 
+tap.test('search event routing ignores constructor names', function (t) {
+  const entryDescriptor = Object.getOwnPropertyDescriptor(
+    ldap.SearchEntry.prototype, 'constructor')
+  const referenceDescriptor = Object.getOwnPropertyDescriptor(
+    ldap.SearchReference.prototype, 'constructor')
+
+  Object.defineProperty(ldap.SearchEntry.prototype, 'constructor', {
+    ...entryDescriptor,
+    value: function RenamedEntry () {}
+  })
+  Object.defineProperty(ldap.SearchReference.prototype, 'constructor', {
+    ...referenceDescriptor,
+    value: function RenamedReference () {}
+  })
+  t.teardown(function () {
+    Object.defineProperty(
+      ldap.SearchEntry.prototype, 'constructor', entryDescriptor)
+    Object.defineProperty(
+      ldap.SearchReference.prototype, 'constructor', referenceDescriptor)
+  })
+
+  t.context.client.search('cn=test, ' + SUFFIX, '(objectclass=*)', function (err, res) {
+    t.error(err)
+    let gotEntry = false
+    res.on('searchEntry', function () {
+      gotEntry = true
+    })
+    res.on('error', t.error)
+    res.on('end', function () {
+      t.ok(gotEntry)
+      t.context.client.search('cn=ref, ' + SUFFIX, '(objectclass=*)', function (err, res) {
+        t.error(err)
+        let gotReference = false
+        res.on('searchReference', function () {
+          gotReference = true
+        })
+        res.on('error', t.error)
+        res.on('end', function () {
+          t.ok(gotReference)
+          t.end()
+        })
+      })
+    })
+  })
+})
+
 tap.test('search rootDSE', function (t) {
   t.context.client.search('', '(objectclass=*)', function (err, res) {
     t.error(err)
