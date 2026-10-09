@@ -28,7 +28,7 @@ The full list of options is:
 ### Note On Logger
 
 The passed in logger is expected to conform to the Log4j standard API.
-Internally, [abstract-logging](https://www.npmjs.com/packages/abstract-logging) is
+Internally, [abstract-logging](https://www.npmjs.com/package/abstract-logging) is
 used to implement the interface. As a result, no log messages will be generated
 unless an external logger is supplied.
 
