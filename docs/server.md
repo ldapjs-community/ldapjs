@@ -60,6 +60,19 @@ return `ldap://localhost:389`.
 
 Emitted when the server closes.
 
+### Event: 'clientError'
+`function(error) {}`
+
+Emitted when a client sends malformed LDAP traffic or request handling returns
+an error. Parser failures close the offending connection, either immediately
+or after sending an LDAP protocol error when a response can be formed.
+
+### Event: 'error'
+`function(error) {}`
+
+Emitted for underlying server or listener failures. As with other Node.js
+`EventEmitter` error events, applications should register a listener.
+
 ## Listening for requests
 
 The LDAP server API wraps up and mirrors the node.js `server.listen` family of
