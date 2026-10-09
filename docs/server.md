@@ -196,8 +196,23 @@ which will be an instance of an `ldap.DN` object.  This is what the client
 authenticated as on this connection. If the client didn't bind, then a DN object
 will be there defaulted to `cn=anonymous`.
 
-Additionally, request will have a `logId` parameter you can use to uniquely
-identify the request/connection pair in logs (includes the LDAP messageID).
+Every request also has a `logId` that can be used to correlate log entries for
+one LDAP operation. It includes the LDAP message ID. The socket's
+`remoteAddress` and `remotePort` identify the client connection instead:
+
+```js
+server.use(function logRequest(req, res, next) {
+  console.log({
+    logId: req.logId,
+    remoteAddress: req.connection.remoteAddress,
+    remotePort: req.connection.remotePort
+  });
+  return next();
+});
+```
+
+The address and port can therefore be shared by several requests, while
+`logId` identifies a single request on that connection.
 
 ## Common Response Elements
 
