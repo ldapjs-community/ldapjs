@@ -327,9 +327,9 @@ tap.beforeEach((t) => {
 })
 
 tap.afterEach((t) => {
-  return new Promise(resolve => {
+  return new Promise((resolve, reject) => {
     t.context.client.unbind((err) => {
-      t.error(err)
+      if (err) return reject(err)
       t.context.server.close(() => resolve())
     })
   })
@@ -383,7 +383,7 @@ tap.test('createClient', t => {
   })
 
   t.test('url array is correctly assigned', async t => {
-    getPort().then(function (unusedPortNumber) {
+    return getPort().then(function (unusedPortNumber) {
       const client = ldap.createClient({
         url: [
           `ldap://127.0.0.1:${unusedPortNumber}`,
@@ -1450,7 +1450,7 @@ tap.test('setup reconnect', function (t) {
       function cleanDisconnect (_, cb) {
         t.ok(rClient.connected)
         rClient.once('close', function (err) {
-          t.error(err)
+          t.notOk(err)
           t.equal(rClient.connected, false)
           cb()
         })

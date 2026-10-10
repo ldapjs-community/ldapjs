@@ -1,4 +1,2 @@
-check-coverage: false
-
-files:
+include:
   - 'test/**/*.test.js'

@@ -27,33 +27,29 @@
     "verror": "^1.8.1"
   },
   "devDependencies": {
-    "eslint": "^7.20.0",
-    "eslint-config-standard": "^16.0.2",
-    "eslint-plugin-import": "^2.22.1",
-    "eslint-plugin-node": "^11.1.0",
-    "eslint-plugin-promise": "^5.1.0",
+    "eslint": "9.39.5",
     "front-matter": "^4.0.2",
     "get-port": "^5.1.1",
     "highlight.js": "^11.0.1",
-    "husky": "^4.2.5",
     "marked": "^4.0.0",
-    "tap": "15.2.3"
+    "neostandard": "0.12.2",
+    "tap": "20.0.3"
+  },
+  "overrides": {
+    "@tapjs/processinfo": {
+      "uuid": "11.1.0"
+    }
   },
   "scripts": {
-    "test": "tap --no-cov -R terse",
-    "test:ci": "tap --coverage-report=lcovonly -R terse",
-    "test:cov": "tap -R terse",
-    "test:cov:html": "tap --coverage-report=html -R terse",
-    "test:watch": "tap -n -w --no-coverage-report -R terse",
-    "test:integration": "tap --no-cov -R terse 'test-integration/**/*.test.js'",
+    "test": "tap --disable-coverage -R terse",
+    "test:ci": "tap --allow-incomplete-coverage -R terse && tap report lcovonly",
+    "test:cov": "tap --allow-incomplete-coverage -R terse",
+    "test:cov:html": "tap --allow-incomplete-coverage -R terse && tap report html --no-browser",
+    "test:watch": "tap -n -w --disable-coverage -R terse",
+    "test:integration": "tap --disable-coverage -R terse 'test-integration/**/*.test.js'",
     "test:integration:local": "docker-compose up -d && npm run test:integration && docker-compose down",
     "lint": "eslint . --fix",
     "lint:ci": "eslint .",
     "docs": "node scripts/build-docs.js"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "npm run lint:ci && npm run test"
-    }
   }
 }

@@ -48,6 +48,7 @@ profile-*
 
 # tap --cov
 .nyc_output/
+.tap/
 
 # JetBrains IntelliJ IDEA
 .idea/
