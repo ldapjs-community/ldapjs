@@ -1,5 +1,40 @@
 # ldapjs Changelog
 
+## 2.4.0 (2026-10-10)
+
+### Added
+
+- Add LDAP result codes 118–122 and their generated error classes from RFC
+  3909 and RFC 4528 ([#15](https://github.com/ldapjs-community/ldapjs/pull/15)).
+- Document request logging with `req.logId`, `req.connection.remoteAddress`,
+  and `req.connection.remotePort`
+  ([#16](https://github.com/ldapjs-community/ldapjs/pull/16)).
+
+### Fixed
+
+- Preserve the numeric code, diagnostic message, and matched DN when a server
+  returns an unknown LDAP result code
+  ([#15](https://github.com/ldapjs-community/ldapjs/pull/15)).
+- Route search entries and references by message type instead of constructor
+  name ([#17](https://github.com/ldapjs-community/ldapjs/pull/17)).
+- Clear request timers when an operation is abandoned, preventing a later
+  timeout callback ([#18](https://github.com/ldapjs-community/ldapjs/pull/18)).
+- Report malformed client packets through `clientError`, close only the
+  offending connection, and keep the server available
+  ([#19](https://github.com/ldapjs-community/ldapjs/pull/19)).
+
+### Maintenance
+
+- Modernize the development toolchain with Tap 20 and ESLint 9, remove Husky
+  4, and retain the Node.js 18, 20, 22, and 24 CI matrix
+  ([#22](https://github.com/ldapjs-community/ldapjs/pull/22)).
+- Update GitHub Actions and documentation dependencies, improve release and
+  contributor guidance, and remove deprecated Tap assertions
+  ([#7](https://github.com/ldapjs-community/ldapjs/pull/7),
+  [#14](https://github.com/ldapjs-community/ldapjs/pull/14),
+  [#21](https://github.com/ldapjs-community/ldapjs/pull/21),
+  [#23](https://github.com/ldapjs-community/ldapjs/pull/23)).
+
 ## 2.0.0
 
 - Going foward, please see https://github.com/ldapjs/node-ldapjs/releases

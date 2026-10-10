@@ -2,7 +2,7 @@
 
 ## Supported versions
 
-Security fixes are released for the latest `2.3.x` version of
+Security fixes are released for the latest `2.x` version of
 `ldapjs-community`. Older 2.x releases and ldapjs 3.x are not supported by
 this fork.
 
