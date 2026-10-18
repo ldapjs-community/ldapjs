@@ -27,8 +27,9 @@ npm test
 npm run lint:ci
 ```
 
-Integration tests require Docker. The local helper starts OpenLDAP, runs the
-tests, and stops the container:
+Integration tests require Docker with Compose v2 (`docker compose`). The local
+helper starts OpenLDAP, waits for its health check, runs the tests, and removes
+the container even if the tests fail. It exits with the test suite's status:
 
 ```console
 npm run test:integration:local
